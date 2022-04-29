@@ -50,7 +50,11 @@
 
 <script>
 import navigation from "@/components/NavBar.vue";
-import firebase from "firebase";
+import firebaseApp from "../firebaseInit.js";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 export default {
     data() {
@@ -79,10 +83,9 @@ export default {
     components: { navigation },
     methods: {
         addSubmission() {
-            firebase
-                .firestore()
+            db
                 .collection("users")
-                .doc(firebase.auth().currentUser.uid)
+                .doc(auth().currentUser.uid)
                 .collection("submissions")
                 .add({
                     firstname: this.submission.firstname,
@@ -103,10 +106,9 @@ export default {
                 });
         },
         async getSubmissions() {
-            var submissionRef = await firebase
-                .firestore()
+            var submissionRef = await db
                 .collection("users")
-                .doc(firebase.auth().currentUser.uid)
+                .doc(auth().currentUser.uid)
                 .collection("submissions");
             submissionRef.onSnapshot(snap => {
                 this.submissions = [];
@@ -119,10 +121,9 @@ export default {
         },
         updateSubmission(docId, e) {
             var isChecked = e.target.checked;
-            firebase
-                .firestore()
+            db
                 .collection("users")
-                .doc(firebase.auth().currentUser.uid)
+                .doc(auth().currentUser.uid)
                 .collection("submissions")
                 .doc(docId)
                 .update({

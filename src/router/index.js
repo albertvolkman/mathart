@@ -5,8 +5,8 @@ import Home from '@/components/Home'
 import Profile from '@/components/Profile'
 import Submissions from '@/components/Submissions'
 
-import firebase from 'firebase'
-
+import firebaseApp from "../firebaseInit.js";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 Vue.use(Router)
 
 let router = new Router({
@@ -51,9 +51,10 @@ let router = new Router({
 
 
 router.beforeEach((to, from, next) => {
+  const auth = getAuth(firebaseApp);
 
   if (to.matched.some(record => record.meta.auth)) {
-    firebase.auth().onAuthStateChanged(user => {
+    onAuthStateChanged(auth, user => {
       if (user) {
         next()
       } else {
@@ -63,7 +64,7 @@ router.beforeEach((to, from, next) => {
       }
     })
   } else if (to.matched.some(record => record.meta.guest)) {
-    firebase.auth().onAuthStateChanged(user => {
+    onAuthStateChanged(auth, user => {
       if (user) {
         next({
           path: "/profile",

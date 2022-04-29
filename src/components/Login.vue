@@ -8,8 +8,9 @@
 
 <script>
 import navigation from "@/components/NavBar.vue";
-import firebase from "firebase";
-import firebaseui from "firebaseui";
+import firebaseApp from "../firebaseInit.js";
+import { getAuth, FacebookAuthProvider, GoogleAuthProvider, EmailAuthProvider } from "firebase/auth";
+import * as firebaseui from "firebaseui";
 import "firebaseui/dist/firebaseui.css";
 
 export default {
@@ -23,16 +24,17 @@ export default {
     mounted() {
         let ui = firebaseui.auth.AuthUI.getInstance();
         if (!ui) {
-            ui = new firebaseui.auth.AuthUI(firebase.auth());
+            const auth = getAuth(firebaseApp);
+            ui = new firebaseui.auth.AuthUI(auth);
         }
         var uiConfig = {
             signInSuccessUrl: "/profile", // This redirect can be achived by route using callback.
             signInFlow: "popup",
 
             signInOptions: [
-                firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                firebase.auth.EmailAuthProvider.PROVIDER_ID
+                FacebookAuthProvider.PROVIDER_ID,
+                GoogleAuthProvider.PROVIDER_ID,
+                EmailAuthProvider.PROVIDER_ID
             ]
         };
         ui.start("#firebaseui-auth-container", uiConfig);

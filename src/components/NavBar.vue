@@ -23,7 +23,9 @@
 </template>
 
 <script>
-import firebase from "firebase";
+import firebaseApp from "../firebaseInit.js";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 export default {
     data() {
         return {
@@ -31,14 +33,16 @@ export default {
         };
     },
     created() {
-        firebase.auth().onAuthStateChanged(user => {
+        const auth = getAuth(firebaseApp);
+        onAuthStateChanged(auth, user => {
             this.user = user;
         });
     },
     methods: {
         signoutButtonPressed(e) {
+            const auth = getAuth(firebaseApp);
             e.stopPropagation();
-            firebase.auth().signOut();
+            auth().signOut();
             this.$router.push({ name: "Login" });
         }
     }

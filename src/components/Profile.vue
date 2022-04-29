@@ -30,7 +30,8 @@
 
 <script>
 import navigation from "@/components/NavBar.vue";
-import firebase from "firebase";
+import firebaseApp from "../firebaseInit.js";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
     data() {
@@ -42,7 +43,8 @@ export default {
         navigation
     },
     created() {
-        firebase.auth().onAuthStateChanged(user => {
+        const auth = getAuth(firebaseApp);
+        onAuthStateChanged(auth, user => {
             if (user) {
                 this.user = user;
             }
