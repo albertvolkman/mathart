@@ -52,7 +52,7 @@
 import navigation from "@/components/NavBar.vue";
 import firebaseApp from "../firebaseInit.js";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, collection, query, doc, getDocs, addDoc, updateDoc } from "firebase/firestore";
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
@@ -83,52 +83,41 @@ export default {
     components: { navigation },
     methods: {
         addSubmission() {
-            db
-                .collection("users")
-                .doc(auth().currentUser.uid)
-                .collection("submissions")
-                .add({
-                    firstname: this.submission.firstname,
-                    lastname: this.submission.lastname,
-                    extendedname: this.submission.extendedname,
-                    position: this.submission.position,
-                    affiliation: this.submission.affiliation,
-                    location: this.submission.location,
-                    email: this.submission.email,
-                    icerm_dates: this.submission.icerm_dates,
-                    website: this.submission.website,
-                    statement: this.submission.statement,
-                    artwork_info: this.submission.artwork_info,
-                    timeframe: this.submission.timeframe,
-                    license: this.submission.license,
-                    createdAt: new Date(),
-                    isCompleted: false
-                });
+            addDoc(collection(db, "users", auth.currentUser.uid, "submissions"), {
+                firstname: this.submission.firstname,
+                lastname: this.submission.lastname,
+                extendedname: this.submission.extendedname,
+                position: this.submission.position,
+                affiliation: this.submission.affiliation,
+                location: this.submission.location,
+                email: this.submission.email,
+                icerm_dates: this.submission.icerm_dates,
+                website: this.submission.website,
+                statement: this.submission.statement,
+                artwork_info: this.submission.artwork_info,
+                timeframe: this.submission.timeframe,
+                license: this.submission.license,
+                createdAt: new Date(),
+                isCompleted: false
+            });
         },
         async getSubmissions() {
-            var submissionRef = await db
-                .collection("users")
-                .doc(auth().currentUser.uid)
-                .collection("submissions");
-            submissionRef.onSnapshot(snap => {
-                this.submissions = [];
-                snap.forEach(doc => {
-                    var submission = doc.data();
-                    submission.id = doc.id;
-                    this.submissions.push(submission);
-                });
+            const q = query(collection(db, "users", auth.currentUser.uid, "submissions"));
+            const querySnapshot = await getDocs(q);
+
+            this.submissions = [];
+            querySnapshot.forEach(doc => {
+                var submission = doc.data();
+                submission.id = doc.id;
+                this.submissions.push(submission);
             });
         },
         updateSubmission(docId, e) {
             var isChecked = e.target.checked;
-            db
-                .collection("users")
-                .doc(auth().currentUser.uid)
-                .collection("submissions")
-                .doc(docId)
-                .update({
-                    isCompleted: isChecked
-                });
+            const submissionRef = doc(db, "users", auth.currentUser.uid, "submissions", docId);
+            updateDoc(submissionRef, {
+                isCompleted: isChecked
+            });
         }
     }
 };
