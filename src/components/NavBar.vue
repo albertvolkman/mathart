@@ -2,7 +2,7 @@
     <nav>
         <div class="nav-wrapper">
             <!-- <a href="#" class="brand-logo">Logo</a> -->
-            <router-link to="/" class="brand-logo" tag="a">Home</router-link>
+            <router-link to="/" class="brand-logo" tag="a">Mathematical Art Galleries</router-link>
 
             <ul id="nav-mobile" class="right">
                 <li v-show="!user">
