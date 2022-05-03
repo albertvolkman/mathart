@@ -6,19 +6,16 @@
             <li class="collection-header">
                 <div class="row">
                     <div class="input-field col s10">
-                        <input placeholder="First Name" type="text" class="validate" v-model="submission.firstname" />
-                        <input placeholder="Last Name" type="text" class="validate" v-model="submission.lastname" />
-                        <input placeholder="Extended Name" type="text" class="validate" v-model="submission.extendedname" />
-                        <input placeholder="Position" type="text" class="validate" v-model="submission.position" />
-                        <input placeholder="Affiliation" type="text" class="validate" v-model="submission.affiliation" />
-                        <input placeholder="Location" type="text" class="validate" v-model="submission.location" />
-                        <input placeholder="Email" type="text" class="validate" v-model="submission.email" />
-                        <input placeholder="ICERM Dates" type="text" class="validate" v-model="submission.icerm_dates" />
-                        <input placeholder="Website" type="text" class="validate" v-model="submission.website" />
-                        <input placeholder="Statement" type="text" class="validate" v-model="submission.statement" />
-                        <input placeholder="Artwork Info" type="text" class="validate" v-model="submission.artwork_info" />
-                        <input placeholder="Timeframe" type="text" class="validate" v-model="submission.timeframe" />
-                        <input placeholder="License" type="text" class="validate" v-model="submission.license" />
+                        <input placeholder="Title" type="text" class="validate" v-model="submission.title" />
+                        <input placeholder="Dimensions" type="text" class="validate" v-model="submission.dimensions" />
+                        <input placeholder="Height" type="text" class="validate" v-model="submission.dimensions_height" />
+                        <input placeholder="Width" type="text" class="validate" v-model="submission.dimensions_width" />
+                        <input placeholder="Depth" type="text" class="validate" v-model="submission.dimensions_depth" />
+                        <input placeholder="Medium" type="text" class="validate" v-model="submission.medium" />
+                        <input placeholder="Year" type="text" class="validate" v-model="submission.year" />
+                        <input placeholder="Description" type="text" class="validate" v-model="submission.description" />
+                        <input placeholder="Math Category" type="text" class="validate" v-model="submission.math_category" />
+                        <input placeholder="More Information URL" type="text" class="validate" v-model="submission.more_information_url" />
                     </div>
                     <div class="input-field col s2">
                         <button class="btn" @click="addSubmission">Add</button>
@@ -29,20 +26,8 @@
                 class="collection-item"
                 v-for="submission in submissions"
                 :key="submission.id"
-                :class="{ fade: submission.isCompleted }"
             >
-                {{submission.artwork_info}}
-                <span class="secondary-content">
-                    <label>
-                        <input
-                            type="checkbox"
-                            class="filled-in"
-                            :checked="submission.isCompleted"
-                            @change="updateSubmission(submission.id, $event)"
-                        />
-                        <span></span>
-                    </label>
-                </span>
+                {{submission.title}}
             </li>
         </ul>
     </section>
@@ -61,19 +46,19 @@ export default {
         return {
             submissions: [],
             submission: {
-                firstname: "",
-                lastname: "",
-                extendedname: "",
-                position: "",
-                affiliation: "",
-                location: "",
-                email: "",
-                icerm_dates: "",
-                website: "",
-                statement: "",
-                artwork_info: "",
-                timeframe: "",
-                license: ""
+                image: "",
+                title: "",
+                dimensions: "",
+                dimensions_height: 0,
+                dimensions_width: 0,
+                dimensions_depth: 0,
+                medium: "",
+                year: "",
+                description: "",
+                math_category: "",
+                math_category_icerm: "",
+                other_math_category: "",
+                more_information_url: ""
             }
         };
     },
@@ -84,21 +69,20 @@ export default {
     methods: {
         addSubmission() {
             addDoc(collection(db, "users", auth.currentUser.uid, "submissions"), {
-                firstname: this.submission.firstname,
-                lastname: this.submission.lastname,
-                extendedname: this.submission.extendedname,
-                position: this.submission.position,
-                affiliation: this.submission.affiliation,
-                location: this.submission.location,
-                email: this.submission.email,
-                icerm_dates: this.submission.icerm_dates,
-                website: this.submission.website,
-                statement: this.submission.statement,
-                artwork_info: this.submission.artwork_info,
-                timeframe: this.submission.timeframe,
-                license: this.submission.license,
+                image: this.submission.image,
+                title: this.submission.title,
+                dimensions: this.submission.dimensions,
+                dimensions_height: this.submission.dimensions_height,
+                dimensions_width: this.submission.dimensions_width,
+                dimensions_depth: this.submission.dimensions_depth,
+                medium: this.submission.medium,
+                year: this.submission.year,
+                description: this.submission.description,
+                math_category: this.submission.math_category,
+                math_category_icerm: this.submission.math_category_icerm,
+                other_math_category: this.submission.other_math_category,
+                more_information_url: this.submission.more_information_url,
                 createdAt: new Date(),
-                isCompleted: false
             });
         },
         async getSubmissions() {
@@ -110,13 +94,6 @@ export default {
                 var submission = doc.data();
                 submission.id = doc.id;
                 this.submissions.push(submission);
-            });
-        },
-        updateSubmission(docId, e) {
-            var isChecked = e.target.checked;
-            const submissionRef = doc(db, "users", auth.currentUser.uid, "submissions", docId);
-            updateDoc(submissionRef, {
-                isCompleted: isChecked
             });
         }
     }
